@@ -4,9 +4,10 @@
 
 ## 功能特点
 
-- **多种单位转换**：支持长度、温度、重量、电量单位转换
+- **多种单位转换**：支持长度、温度、重量、电量、货币单位转换
 - **实时转换**：输入即转换，无需点击按钮
 - **参数化转换**：支持需要额外参数的转换（如电量转换需要电压）
+- **实时汇率**：货币转换器支持实时汇率获取，自动缓存10分钟
 - **易于扩展**：基于插件架构，轻松添加新的转换类型
 - **简洁界面**：清晰直观的用户界面
 
@@ -26,9 +27,15 @@
 - 磅 (lb)、盎司 (oz)
 
 ### 电量 (Battery)
-- 电荷单位：毫安时 (mAh)、安时 (Ah)
-- 能量单位：瓦时 (Wh)、千瓦时 (kWh)
+- 电荷单位：毫安时、安时
+- 能量单位：瓦时、千瓦时
 - 支持电压参数输入，默认3.7V（锂电池常用电压）
+
+### 货币 (Currency)
+- 支持货币：人民币、美元、欧元、日元、英镑、韩元、港币、澳元、加元、新币
+- 实时汇率获取，缓存10分钟
+- 自动网络错误处理和重试机制
+- 基于USD作为基准货币进行双向转换
 
 ## 安装和运行
 
@@ -59,7 +66,10 @@ python -m src.main
 pytest tests/ -v
 
 # 运行单个测试文件
-pytest tests/test_length.py -v
+pytest tests/test_currency.py -v
+
+# 运行货币转换器特定测试
+pytest tests/test_currency.py::TestCurrencyConverter::test_converter_name -v
 
 # 运行测试并查看覆盖率
 pytest tests/ --cov=src --cov-report=html
@@ -83,7 +93,8 @@ QuickConvertTool/
 │   │   ├── length.py              # 长度单位转换器
 │   │   ├── temperature.py         # 温度转换器
 │   │   ├── weight.py              # 重量转换器
-│   │   └── battery.py             # 电量转换器
+│   │   ├── battery.py             # 电量转换器
+│   │   └── currency.py            # 货币转换器
 │   └── ui/
 │       ├── __init__.py
 │       └── main_window.py         # Tkinter主窗口UI
@@ -92,7 +103,8 @@ QuickConvertTool/
 │   ├── test_length.py             # 长度转换器测试
 │   ├── test_temperature.py        # 温度转换器测试
 │   ├── test_weight.py             # 重量转换器测试
-│   └── test_battery.py            # 电量转换器测试
+│   ├── test_battery.py            # 电量转换器测试
+│   └── test_currency.py           # 货币转换器测试
 ├── requirements.txt               # 项目依赖
 ├── README.md                      # 项目文档
 └── CLAUDE.md                      # Claude AI 指导文档
@@ -213,6 +225,14 @@ MIT License
 欢迎提交问题和拉取请求！
 
 ## 更新日志
+
+### v0.3.0
+- 新增货币转换器（人民币、美元、欧元、日元、英镑、韩元、港币、澳元、加元、新币）
+- 支持实时汇率获取，使用exchangerate-api.com
+- 实现汇率缓存机制，10分钟有效期
+- 完善的网络错误处理和超时机制
+- 基于USD基准货币的双向转换架构
+- 完整的货币转换器单元测试（25个测试用例）
 
 ### v0.2.0
 - 新增电量转换器（mAh、Ah、Wh、kWh）
