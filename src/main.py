@@ -1,7 +1,7 @@
 """QuickConvertTool - Main application entry point."""
 
 from .core.registry import get_global_registry
-from .converters import LengthConverter, TemperatureConverter, WeightConverter
+from .converters import LengthConverter, TemperatureConverter, WeightConverter, BatteryConverter
 from .ui import MainWindow
 
 
@@ -19,6 +19,7 @@ def main():
     registry.register(LengthConverter())
     registry.register(TemperatureConverter())
     registry.register(WeightConverter())
+    registry.register(BatteryConverter())
 
     # Create and run the main window
     app = MainWindow(registry)

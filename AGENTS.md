@@ -120,6 +120,40 @@ if unit not in self.units:
 3. Register in `src/main.py`
 4. Add comprehensive tests in `tests/`
 
+### Adding Parameterized Converters
+For converters requiring additional parameters (e.g., voltage, exchange rate), inherit from `ParameterizedConverter` instead of `Converter`:
+
+```python
+from typing import List, Dict
+from ..core.parameterized_converter import ParameterizedConverter
+
+class MyConverter(ParameterizedConverter):
+    @property
+    def name(self) -> str:
+        return "MyConverter"
+
+    @property
+    def units(self) -> List[str]:
+        return ["unit1", "unit2"]
+
+    @property
+    def parameters(self) -> Dict:
+        return {
+            "param_name": {
+                "label": "Parameter Label",
+                "default": "default_value",
+                "required": True
+            }
+        }
+
+    def _convert_with_params(self, value: float, from_unit: str, to_unit: str, **kwargs) -> float:
+        param_value = kwargs.get("param_name", default_value)
+        return value * param_value
+```
+
+UI automatically displays parameter input fields when selecting a parameterized converter.
+Window size adjusts to 380px height for parameter input area.
+
 ### Testing Guidelines
 - Use pytest framework
 - Create test classes for each converter (e.g., `TestLengthConverter`)

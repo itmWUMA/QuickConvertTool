@@ -4,8 +4,9 @@
 
 ## 功能特点
 
-- **多种单位转换**：支持长度、温度、重量单位转换
+- **多种单位转换**：支持长度、温度、重量、电量单位转换
 - **实时转换**：输入即转换，无需点击按钮
+- **参数化转换**：支持需要额外参数的转换（如电量转换需要电压）
 - **易于扩展**：基于插件架构，轻松添加新的转换类型
 - **简洁界面**：清晰直观的用户界面
 
@@ -23,6 +24,11 @@
 ### 重量 (Weight)
 - 千克 (kg)、克 (g)、毫克 (mg)、吨 (ton)
 - 磅 (lb)、盎司 (oz)
+
+### 电量 (Battery)
+- 电荷单位：毫安时 (mAh)、安时 (Ah)
+- 能量单位：瓦时 (Wh)、千瓦时 (kWh)
+- 支持电压参数输入，默认3.7V（锂电池常用电压）
 
 ## 安装和运行
 
@@ -70,12 +76,14 @@ QuickConvertTool/
 │   ├── core/
 │   │   ├── __init__.py
 │   │   ├── converter.py           # 转换器抽象基类
+│   │   ├── parameterized_converter.py  # 参数化转换器基类
 │   │   └── registry.py            # 转换器注册和管理系统
 │   ├── converters/
 │   │   ├── __init__.py
 │   │   ├── length.py              # 长度单位转换器
 │   │   ├── temperature.py         # 温度转换器
-│   │   └── weight.py              # 重量转换器
+│   │   ├── weight.py              # 重量转换器
+│   │   └── battery.py             # 电量转换器
 │   └── ui/
 │       ├── __init__.py
 │       └── main_window.py         # Tkinter主窗口UI
@@ -83,7 +91,8 @@ QuickConvertTool/
 │   ├── __init__.py
 │   ├── test_length.py             # 长度转换器测试
 │   ├── test_temperature.py        # 温度转换器测试
-│   └── test_weight.py             # 重量转换器测试
+│   ├── test_weight.py             # 重量转换器测试
+│   └── test_battery.py            # 电量转换器测试
 ├── requirements.txt               # 项目依赖
 ├── README.md                      # 项目文档
 └── CLAUDE.md                      # Claude AI 指导文档
@@ -135,6 +144,40 @@ registry.register(CurrencyConverter())
 
 在 `tests/` 目录下创建 `test_currency.py` 并编写单元测试。
 
+5. **参数化转换器（可选）**
+
+如果转换器需要额外参数（如电量转换需要电压），继承 `ParameterizedConverter` 而不是 `Converter`：
+
+```python
+from typing import List, Dict
+from ..core.parameterized_converter import ParameterizedConverter
+
+class BatteryConverter(ParameterizedConverter):
+    @property
+    def name(self) -> str:
+        return "Battery"
+
+    @property
+    def units(self) -> List[str]:
+        return ["mAh", "Ah", "Wh", "kWh"]
+
+    @property
+    def parameters(self) -> Dict:
+        return {
+            "voltage": {
+                "label": "Voltage (V)",
+                "default": "3.7",
+                "required": True
+            }
+        }
+
+    def _convert_with_params(self, value: float, from_unit: str, to_unit: str, **kwargs) -> float:
+        voltage = kwargs.get("voltage", 3.7)
+        return value * voltage
+```
+
+UI 会自动显示参数输入框，窗口高度自动调整为 380px。
+
 ## 架构设计
 
 ### 核心组件
@@ -170,6 +213,13 @@ MIT License
 欢迎提交问题和拉取请求！
 
 ## 更新日志
+
+### v0.2.0
+- 新增电量转换器（mAh、Ah、Wh、kWh）
+- 实现参数化转换器架构，支持需要额外参数的转换
+- UI自动显示参数输入区域
+- 窗口高度动态调整以容纳参数输入
+- 完整的电量转换器单元测试（30个测试用例）
 
 ### v0.1.0 (Initial Release)
 - 实现长度、温度、重量转换器
