@@ -23,7 +23,7 @@ class TemperatureConverter(Converter):
     @property
     def name(self) -> str:
         """Return the display name of this converter."""
-        return "Temperature"
+        return "温度"
 
     @property
     def units(self) -> List[str]:
