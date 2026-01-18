@@ -24,7 +24,7 @@ class BatteryConverter(ParameterizedConverter):
     @property
     def name(self) -> str:
         """Return the display name of this converter."""
-        return "Battery"
+        return "电容量"
 
     @property
     def units(self) -> List[str]:

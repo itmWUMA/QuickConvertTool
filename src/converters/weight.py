@@ -25,7 +25,7 @@ class WeightConverter(Converter):
     @property
     def name(self) -> str:
         """Return the display name of this converter."""
-        return "Weight"
+        return "重量"
 
     @property
     def units(self) -> List[str]:
